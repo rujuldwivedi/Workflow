@@ -1,0 +1,36 @@
+{
+  "name": "expressnode",
+  "version": "1.0.0",
+  "description": "Backend for WRKFLOW web app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:server": "webpack --config webpack.server.js",
+    "start:server": "node build/server.js"
+  },
+  "type": "module",
+  "author": "Rujul",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "mongodb": "^6.7.0",
+    "mongoose": "^8.4.1",
+    "nodemon": "^3.1.3",
+    "path": "^0.12.7",
+    "react-dom": "^18.3.1",
+    "url": "^0.11.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.7",
+    "@babel/preset-env": "^7.24.7",
+    "@babel/preset-react": "^7.24.7",
+    "babel-loader": "^9.1.3",
+    "tsx": "^4.15.6",
+    "webpack": "^5.92.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
+  }
+}

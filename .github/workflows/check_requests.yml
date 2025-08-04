@@ -22,11 +22,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install selenium webdriver-manager
 
       - name: Install Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
+
+      - name: Create config directory
+        run: mkdir -p config # Add this step to create the directory
 
       - name: Run Instagram checker
         env:
@@ -56,6 +60,7 @@ jobs:
               'headless': 'True'
           }
 
+          os.makedirs('config', exist_ok=True)  # Ensure directory exists
           with open('config/config.ini', 'w') as f:
               config.write(f)
           "

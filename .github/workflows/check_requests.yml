@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.9"
 
@@ -55,23 +55,23 @@ jobs:
           headless = True
           EOF
 
-          echo "Config file created successfully:"
+          echo "Config file contents:"
           cat config/config.ini
 
       - name: Run Instagram checker
         run: |
-          # Debug directory structure
           echo "Current directory structure:"
           ls -R
 
-          # Run the script with explicit Python call
           python src/main.py
 
-      - name: Upload logs on failure
+      - name: Upload debug files on failure
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: error-logs
+          name: error-debug-files
           path: |
-            *.log
+            debug.log
             debug.png
+            config/config.ini
+          retention-days: 1

@@ -2,7 +2,6 @@
 state.json
 __pycache__/
 *.pyc
-config/
 .env.example
 *.pkl
 *.json

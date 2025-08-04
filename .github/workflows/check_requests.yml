@@ -2,76 +2,37 @@ name: Check Instagram Follow Requests
 
 on:
   schedule:
-    - cron: "*/10 * * * *" # Every 10 minutes
+    - cron: "*/10 * * * *"
   workflow_dispatch:
 
 jobs:
   check-requests:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.9"
-
-      - name: Install system dependencies
+          
+      - name: Install dependencies
         run: |
-          sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
+          pip install selenium webdriver-manager
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install selenium webdriver-manager instagrapi python-dotenv
-          pip install -r requirements.txt
-
-      - name: Create config directory
-        run: mkdir -p config
-
-      - name: Generate config file
+      - name: Run Instagram checker
         env:
           INSTAGRAM_USERNAME: ${{ secrets.INSTAGRAM_USERNAME }}
           INSTAGRAM_PASSWORD: ${{ secrets.INSTAGRAM_PASSWORD }}
           ICLOUD_EMAIL: ${{ secrets.ICLOUD_EMAIL }}
           ICLOUD_PASSWORD: ${{ secrets.ICLOUD_PASSWORD }}
         run: |
-          cat << 'EOF' > config/config.ini
-          [instagram]
-          username = ${INSTAGRAM_USERNAME}
-          password = ${INSTAGRAM_PASSWORD}
-
-          [email]
-          smtp_server = smtp.mail.me.com
-          smtp_port = 587
-          email = ${ICLOUD_EMAIL}
-          password = ${ICLOUD_PASSWORD}
-          recipient_email = rujuldwivedi@icloud.com
-
-          [selenium]
-          headless = True
-          EOF
-
-          echo "Config file contents:"
-          cat config/config.ini
-
-      - name: Run Instagram checker
-        run: |
-          echo "Current directory structure:"
-          ls -R
-
-          python src/main.py
-
-      - name: Upload debug files on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: error-debug-files
-          path: |
-            debug.log
-            debug.png
-            config/config.ini
-          retention-days: 1
+          python src/main.py \
+            --instagram-username "$INSTAGRAM_USERNAME" \
+            --instagram-password "$INSTAGRAM_PASSWORD" \
+            --email "$ICLOUD_EMAIL" \
+            --email-password "$ICLOUD_PASSWORD" \
+            --recipient-email "rujuldwivedi@icloud.com"

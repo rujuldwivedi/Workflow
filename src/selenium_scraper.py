@@ -19,21 +19,33 @@ class InstagramSeleniumScraper:
         self.logger = logging.getLogger(__name__)
         self.cookies_file = f"{username}_cookies.pkl"
         self.driver = self._init_driver()
-
+    
     def _init_driver(self):
-        """Initialize Chrome WebDriver with options"""
         from selenium.webdriver.chrome.options import Options
-        
+        from selenium.webdriver.chrome.service import Service
+        from webdriver_manager.chrome import ChromeDriverManager
+    
         options = Options()
-        if self.headless:
-            options.add_argument("--headless")
-        options.add_argument("--disable-gpu")
+        options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--window-size=1200,800")
-        options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
-        
-        driver = webdriver.Chrome(options=options)
+        options.add_argument("--disable-gpu")
+    
+        try:
+        # Try using system Chrome first
+            options.binary_location = "/usr/bin/google-chrome"
+            driver = webdriver.Chrome(
+                service=Service(executable_path="/usr/bin/chromedriver"),
+                options=options
+            )
+        except Exception as e:
+            # Fallback to webdriver-manager
+            self.logger.warning(f"System Chrome failed, falling back to webdriver-manager: {e}")
+            driver = webdriver.Chrome(
+                service=Service(ChromeDriverManager().install()),
+                options=options
+            )
+    
         return driver
 
     def _save_cookies(self):

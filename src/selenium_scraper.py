@@ -32,21 +32,15 @@ class InstagramSeleniumScraper:
         options.add_argument("--disable-gpu")
     
         try:
-        # Try using system Chrome first
-            options.binary_location = "/usr/bin/google-chrome"
-            driver = webdriver.Chrome(
-                service=Service(executable_path="/usr/bin/chromedriver"),
-                options=options
-            )
-        except Exception as e:
-            # Fallback to webdriver-manager
-            self.logger.warning(f"System Chrome failed, falling back to webdriver-manager: {e}")
+            # Use webdriver-manager to handle ChromeDriver automatically
             driver = webdriver.Chrome(
                 service=Service(ChromeDriverManager().install()),
                 options=options
             )
-    
-        return driver
+            return driver
+        except Exception as e:
+            self.logger.error(f"Failed to initialize Chrome: {str(e)}")
+            raise
 
     def _save_cookies(self):
         """Save session cookies to file"""
